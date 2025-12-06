@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Apex Overlay</title>
+<style>
+  :root{
+    --navy:#0A1A3B;
+    --yellow:#FFC928;
+    --white:#FFFFFF;
+    --w:1080px;
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    background:transparent;
+  }
+  .wrap{
+    width:var(--w);
+    max-width:100%;
+    margin:0 auto;
+    padding:20px;
+    box-sizing:border-box;
+    font-family:"Montserrat","Roboto",sans-serif;
+    color:var(--white);
+  }
+  .card{
+    width:100%;
+    background:var(--navy);
+    border:4px solid var(--yellow);
+    border-radius:18px;
+    padding:18px;
+    box-sizing:border-box;
+  }
+
+  /* SCORE */
+  .score{
+    text-align:center;
+    font-weight:700;
+    font-size:180px;
+    line-height:0.85;
+    color:var(--white);
+    background:var(--navy);
+    padding:12px;
+    border-radius:8px;
+    border:4px solid var(--yellow);
+    margin-bottom:8px;
+  }
+
+  /* OVERS */
+  .oversBar{
+    background:var(--yellow);
+    color:var(--navy);
+    text-align:center;
+    padding:8px 0;
+    font-weight:700;
+    border-radius:6px;
+    margin-bottom:12px;
+    font-size:46px;
+  }
+
+  /* BATSMEN */
+  .playerRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:3px solid var(--yellow);
+    padding:10px;
+    margin-bottom:8px;
+    border-radius:8px;
+  }
+  .playerLeft{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:42px;
+  }
+  .dot{
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background:var(--yellow);
+    display:inline-block;
+  }
+  .playerRight{
+    font-size:40px;
+    font-weight:700;
+  }
+
+  /* BOWLER */
+  .bowlerRow{
+    border:3px solid var(--yellow);
+    padding:10px;
+    border-radius:8px;
+    margin-top:6px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:36px;
+  }
+
+  /* LAST BALLS */
+  .lastBalls{
+    display:flex;
+    gap:8px;
+    justify-content:space-between;
+  }
+  .ball{
+    flex:1;
+    border:3px solid var(--yellow);
+    border-radius:6px;
+    padding:8px;
+    text-align:center;
+    font-size:36px;
+    font-weight:700;
+  }
+
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="card" style="background:transparent;border:none;">
+
+    <div class="score" id="scoreText">0/0</div>
+    <div class="oversBar" id="oversText">0.0 OVERS</div>
+
+    <div class="playerRow">
+      <div class="playerLeft">
+        <span class="dot" id="p1dot"></span>
+        <div id="p1name">Batsman 1</div>
+      </div>
+      <div class="playerRight"><span id="p1runs">0</span>/<span id="p1balls">0</span></div>
+    </div>
+
+    <div class="playerRow">
+      <div class="playerLeft">
+        <span class="dot" id="p2dot" style="background:transparent;border:3px solid var(--yellow)"></span>
+        <div id="p2name">Batsman 2</div>
+      </div>
+      <div class="playerRight"><span id="p2runs">0</span>/<span id="p2balls">0</span></div>
+    </div>
+
+    <div class="bowlerRow">
+      <div id="bowlerName">Bowler</div>
+      <div id="bowlerFigures">0.0 - 0 - 0</div>
+    </div>
+
+    <div class="lastBalls">
+      <div class="ball" id="b1">-</div>
+      <div class="ball" id="b2">-</div>
+      <div class="ball" id="b3">-</div>
+      <div class="ball" id="b4">-</div>
+      <div class="ball" id="b5">-</div>
+      <div class="ball" id="b6">-</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CONFIG = {
+  feedUrl: "YOUR_APPSCRIPT_WEBAPP_URL",
+  refreshMs: 1200
+};
+
+async function fetchAndRender() {
+  try {
+    const res = await fetch(CONFIG.feedUrl);
+    const data = await res.json();
+
+    document.getElementById('scoreText').textContent = data.score;
+    document.getElementById('oversText').textContent = data.overs + " OVERS";
+
+    const p1 = data.batsmen[0];
+    const p2 = data.batsmen[1];
+
+    document.getElementById('p1name').textContent = p1.name;
+    document.getElementById('p1runs').textContent = p1.runs;
+    document.getElementById('p1balls').textContent = p1.balls;
+
+    document.getElementById('p2name').textContent = p2.name;
+    document.getElementById('p2runs').textContent = p2.runs;
+    document.getElementById('p2balls').textContent = p2.balls;
+
+    document.getElementById('p1dot').style.background = p1.striker ? "var(--yellow)" : "transparent";
+    document.getElementById('p1dot').style.border = p1.striker ? "none" : "3px solid var(--yellow)";
+    document.getElementById('p2dot').style.background = p2.striker ? "var(--yellow)" : "transparent";
+    document.getElementById('p2dot').style.border = p2.striker ? "none" : "3px solid var(--yellow)";
+
+    const lb = data.lastBalls;
+    const filled = Array(6 - lb.length).fill("-").concat(lb);
+    filled.forEach((val, i) => {
+      const el = document.getElementById('b' + (i+1));
+      el.textContent = val;
+      if(val === "W"){
+        el.style.background = "#B71C1C";
+        el.style.color = "#fff";
+      } else if(val === "4" || val === "6"){
+        el.style.background = "var(--yellow)";
+        el.style.color = "var(--navy)";
+      } else {
+        el.style.background = "transparent";
+        el.style.color = "var(--white)";
+      }
+    });
+
+    document.getElementById('bowlerName').textContent = data.bowler.name;
+    document.getElementById('bowlerFigures').textContent =
+      data.bowler.overs+" - "+data.bowler.runs+" - "+data.bowler.wickets;
+
+  } catch(err){
+    console.error("Error:", err);
+  }
+}
+
+fetchAndRender();
+setInterval(fetchAndRender, CONFIG.refreshMs);
+</script>
+
+</body>
+</html>
