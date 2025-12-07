@@ -3,38 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apex Horizontal Overlay</title>
+<title>Apex Horizontal Overlay — Yellow/Navy</title>
 
 <style>
 :root{
-  --bg: rgba(10,26,59,0.78);
-  --accent: #FFC928;
-  --white: #fff;
-  --muted: rgba(255,255,255,0.85);
+  --bg-yellow: #FFC928;   /* background yellow requested */
+  --navy: #0A1A3B;        /* navy font color */
+  --white: #ffffff;
   --radius: 20px;
   --h: 80px;
 }
 
-/* Body is transparent for Streamlabs */
+/* Body transparent area behind bar kept subtle: you asked background yellow — the bar itself will be yellow */
 body{
   margin:0;
   background:transparent;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+  font-weight: 800; /* bold */
+  -webkit-font-smoothing:antialiased;
 }
 
 /* Main bar container */
 .bar{
-  width: 100%;
+  width:100%;
   height: var(--h);
-  background: var(--bg);
+  background: var(--bg-yellow);
   border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
-  gap: 30px;
-  backdrop-filter: blur(5px);
-  border:2px solid rgba(255,255,255,0.1);
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  box-sizing:border-box;
+  gap:30px;
+  border: 3px solid rgba(10,26,59,0.06);
+  box-shadow: 0 6px 20px rgba(10,26,59,0.12);
 }
 
 /* Left block: Team + Score */
@@ -42,22 +43,23 @@ body{
   display:flex;
   align-items:center;
   gap:18px;
+  min-width:320px;
 }
 .team{
   font-size:26px;
-  font-weight:800;
-  color:var(--accent);
+  font-weight:900;
+  color:var(--navy);
   letter-spacing:1px;
 }
 .score{
   font-size:34px;
   font-weight:900;
-  color:var(--white);
+  color:var(--navy);
 }
 .overs{
   font-size:18px;
-  font-weight:700;
-  color:var(--muted);
+  font-weight:900;
+  color:var(--navy);
 }
 
 /* Center block: THIS OVER */
@@ -65,75 +67,99 @@ body{
   display:flex;
   align-items:center;
   gap:10px;
+  flex:1 1 560px;
+  justify-content:center;
 }
 .label{
   font-size:18px;
-  font-weight:700;
-  color:var(--muted);
+  font-weight:900;
+  color:var(--navy);
+  padding-right:6px;
 }
 .ball{
-  width:36px;
-  height:36px;
+  width:42px;
+  height:42px;
   border-radius:8px;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:20px;
-  font-weight:800;
-  border:2px solid var(--accent);
-  color:var(--white);
+  font-weight:900;
+  border:2px solid var(--navy);
+  color:var(--navy);         /* all fonts navy as requested */
+  background: rgba(255,255,255,0.0); /* transparent-ish — keep yellow bar visible */
+  box-shadow: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
 }
-.zero{ border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); }
-.run4{ background:var(--accent); color:var(--bg); }
-.run6{ background:var(--accent); color:var(--bg); }
-.wicket{ background:#B71C1C; border-color:#8A1515; }
+.ball.zero{ color:var(--navy); opacity:0.9; }
+.ball.wicket{ background:#ffffff; color:#B71C1C; border-color:#8A1515; }
+.ball.extra{ color:var(--navy); }
 
-/* Right block: batsmen & bowler */
+/* 4/6 highlight animation — pulse + glow */
+@keyframes hitPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(10,26,59,0.0); }
+  30% { transform: scale(1.25); box-shadow: 0 8px 30px rgba(10,26,59,0.28); }
+  60% { transform: scale(1.05); box-shadow: 0 6px 20px rgba(10,26,59,0.18); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(10,26,59,0.0); }
+}
+.ball.hit {
+  animation: hitPulse 700ms ease forwards;
+}
+
+/* Right block: batsmen & bowler (all inline) */
 .right{
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:22px;
+  min-width:420px;
+  justify-content:flex-end;
 }
-
 .bat{
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:8px;
   font-size:18px;
-  color:var(--white);
-  font-weight:700;
+  color:var(--navy);
+  font-weight:900;
 }
 .dot{
   width:14px;
   height:14px;
   border-radius:50%;
-  background:var(--accent);
+  background:var(--navy);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 .dot.off{
   background:transparent;
-  border:2px solid var(--accent);
+  border:2px solid var(--navy);
 }
-
 .bowler{
   font-size:16px;
-  color:var(--muted);
-  font-weight:700;
+  color:var(--navy);
+  font-weight:900;
+}
+
+/* Responsive: shrink spacing */
+@media (max-width:1200px){
+  .bar{ gap:12px; padding:0 12px; }
+  .left{ min-width:220px; }
+  .score{ font-size:28px; }
+  .ball{ width:34px; height:34px; font-size:16px; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="bar">
-
-  <!-- LEFT BLOCK -->
+<div class="bar" id="bar">
+  <!-- LEFT -->
   <div class="left">
-    <div class="team" id="teamName">APX</div>
+    <div class="team" id="teamName">APEX</div>
     <div class="score" id="scoreBig">0/0</div>
     <div class="overs" id="oversSmall">0.0 ov</div>
   </div>
 
-  <!-- CENTER BLOCK -->
+  <!-- CENTER -->
   <div class="center">
     <div class="label">THIS OVER</div>
     <div class="ball zero" id="b1">-</div>
@@ -144,9 +170,8 @@ body{
     <div class="ball zero" id="b6">-</div>
   </div>
 
-  <!-- RIGHT BLOCK -->
+  <!-- RIGHT -->
   <div class="right">
-
     <div class="bat">
       <div class="dot" id="s1dot"></div>
       <span id="p1name">P1</span>
@@ -160,13 +185,11 @@ body{
     </div>
 
     <div class="bowler" id="bowlerFigures">Bowler 0.0-0-0</div>
-
   </div>
 </div>
 
 <script>
-
-/* Your Apps Script URL already inserted */
+/* CONFIG: your Apps Script webapp (already set to the last URL you provided) */
 const CONFIG = {
   feedUrl: "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec",
   refreshMs: 1200,
@@ -176,53 +199,87 @@ const CONFIG = {
 /* JSONP loader */
 function loadJSONP(){
   const s = document.createElement("script");
-  s.src = CONFIG.feedUrl + "?callback=" + CONFIG.jsonpCallbackName + "&_=" + Date.now();
-  document.body.appendChild(s);
-  s.onload = () => { document.body.removeChild(s); };
+  const ts = Date.now();
+  const url = CONFIG.feedUrl + (CONFIG.feedUrl.indexOf('?') === -1 ? '?' : '&') + "callback=" + CONFIG.jsonpCallbackName + "&_=" + ts;
+  s.src = url;
+  s.async = true;
+  s.onerror = function(e){ console.error("JSONP load failed", e, url); };
+  document.head.appendChild(s);
+  s.onload = ()=>{ try{ document.head.removeChild(s);}catch(e){} };
+}
+
+/* helper to animate a ball element for 4/6 */
+function animateHit(el){
+  if(!el) return;
+  el.classList.remove("hit");
+  // trigger reflow to restart animation
+  void el.offsetWidth;
+  el.classList.add("hit");
+  // remove class after animation finishes (700ms)
+  setTimeout(()=>{ el.classList.remove("hit"); }, 800);
 }
 
 /* JSONP callback */
 function apexLTCallback(data){
   if(!data) return;
 
-  document.getElementById("teamName").textContent = data.team || "TEAM";
+  // team/score/overs
+  document.getElementById("teamName").textContent = data.team || data.title || "APEX";
   document.getElementById("scoreBig").textContent = data.score || "0/0";
   document.getElementById("oversSmall").textContent = (data.overs || "0.0") + " ov";
 
-  const p1 = data.batsmen?.[0] || {name:"-",runs:0,balls:0,striker:false};
-  const p2 = data.batsmen?.[1] || {name:"-",runs:0,balls:0,striker:false};
+  // batsmen
+  const p1 = (data.batsmen && data.batsmen[0]) || {name:"-",runs:0,balls:0,striker:false};
+  const p2 = (data.batsmen && data.batsmen[1]) || {name:"-",runs:0,balls:0,striker:false};
+  document.getElementById("p1name").textContent = p1.name || "-";
+  document.getElementById("p1stats").textContent = (p1.runs||0) + "(" + (p1.balls||0) + ")";
+  document.getElementById("p2name").textContent = p2.name || "-";
+  document.getElementById("p2stats").textContent = (p2.runs||0) + "(" + (p2.balls||0) + ")";
 
-  document.getElementById("p1name").textContent = p1.name;
-  document.getElementById("p1stats").textContent = `${p1.runs}(${p1.balls})`;
-  document.getElementById("p2name").textContent = p2.name;
-  document.getElementById("p2stats").textContent = `${p2.runs}(${p2.balls})`;
-
+  // striker dots (navy on; transparent off)
   document.getElementById("s1dot").classList.toggle("off", !p1.striker);
   document.getElementById("s2dot").classList.toggle("off", !p2.striker);
 
+  // bowler
   if(data.bowler){
     document.getElementById("bowlerFigures").textContent =
       `${data.bowler.name} ${data.bowler.overs}-${data.bowler.runs}-${data.bowler.wickets}`;
   }
 
+  // last 6 balls
   const lb = data.lastBalls || [];
-  const arr = Array(6 - lb.length).fill("-").concat(lb);
+  const filled = Array(6 - lb.length).fill("-").concat(lb);
   for(let i=0;i<6;i++){
     const el = document.getElementById("b"+(i+1));
-    const v = arr[i];
+    const v = (filled[i]===undefined) ? "-" : filled[i];
     el.textContent = v;
+    // reset classes/styles
     el.className = "ball";
+    el.style.background = "transparent";
+    el.style.color = "var(--navy)";
 
-    if(v==="W") el.classList.add("wicket");
-    else if(v==="4") el.classList.add("run4");
-    else if(v==="6") el.classList.add("run6");
-    else if(String(v).startsWith("+")){
-      el.style.background="#444"; el.style.color="#fff";
+    if(v === "W"){
+      el.classList.add("wicket");
+      // small flash for wicket
+      animateHit(el);
+    } else if(v === "4" || v === 4){
+      // 4 hit — add hit animation
+      el.classList.add("zero");
+      animateHit(el);
+    } else if(v === "6" || v === 6){
+      el.classList.add("zero");
+      animateHit(el);
+    } else if(String(v).startsWith("+")){
+      el.classList.add("zero");
+      el.style.background = "#EEE"; // slight grey for extra
+      el.style.color = "var(--navy)";
+    } else {
+      el.classList.add("zero");
     }
-    else el.classList.add("zero");
   }
 }
 
+/* start loop */
 function loop(){
   loadJSONP();
   setTimeout(loop, CONFIG.refreshMs);
