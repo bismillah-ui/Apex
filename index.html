@@ -3,122 +3,175 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex Overlay (JSONP)</title>
+<title>Apex Lower-Third Overlay</title>
 <style>
-  :root{--navy:#0A1A3B;--yellow:#FFC928;--white:#FFFFFF;--w:1080px;}
-  html,body{height:100%;margin:0;background:transparent;}
-  .wrap{width:var(--w);max-width:100%;margin:0 auto;padding:20px;box-sizing:border-box;font-family:"Montserrat","Roboto",sans-serif;color:var(--white);}
-  .card{width:100%;background:var(--navy);border:4px solid var(--yellow);border-radius:18px;padding:18px;box-sizing:border-box;}
-  .score{ text-align:center;font-weight:700;font-size:180px;line-height:0.85;color:var(--white);background:var(--navy);padding:12px;border-radius:8px;border:4px solid var(--yellow);margin-bottom:8px;}
-  .oversBar{background:var(--yellow);color:var(--navy);text-align:center;padding:8px 0;font-weight:700;border-radius:6px;margin-bottom:12px;font-size:46px;}
-  .playerRow{display:flex;justify-content:space-between;align-items:center;border:3px solid var(--yellow);padding:10px;margin-bottom:8px;border-radius:8px;}
-  .playerLeft{display:flex;align-items:center;gap:12px;font-size:42px;}
-  .dot{width:26px;height:26px;border-radius:50%;background:var(--yellow);display:inline-block;}
-  .playerRight{font-size:40px;font-weight:700;}
-  .bowlerRow{border:3px solid var(--yellow);padding:10px;border-radius:8px;margin-top:6px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:36px;}
-  .lastBalls{display:flex;gap:8px;justify-content:space-between;}
-  .ball{flex:1;border:3px solid var(--yellow);border-radius:6px;padding:8px;text-align:center;font-size:36px;font-weight:700;}
+  :root{
+    --bg: rgba(10,26,59,0.78);
+    --accent: #FFC928;
+    --white: #ffffff;
+    --muted: rgba(255,255,255,0.85);
+    --card-h: 160px;
+    --w:1920px;
+    --radius: 24px;
+    --gap: 14px;
+  }
+  html,body{height:100%;margin:0;background:transparent;font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;}
+  .stage{width:100%;display:flex;justify-content:center;align-items:flex-end;padding:20px 0;box-sizing:border-box;}
+  .lowerThird{
+    width:1180px;max-width:95%;height:var(--card-h);display:flex;gap:var(--gap);align-items:center;padding:14px;border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);box-sizing:border-box;backdrop-filter: blur(6px);
+  }
+  .leftBlock{min-width:360px;background:var(--bg);border-radius:14px;padding:12px 16px;display:flex;flex-direction:column;justify-content:center;box-sizing:border-box;border:3px solid rgba(255,201,40,0.06);}
+  .teamRow{display:flex;justify-content:space-between;align-items:center;}
+  .teamName{color:var(--muted);font-weight:700;font-size:26px;letter-spacing:1px;}
+  .oversSmall{color:var(--muted);font-size:18px;font-weight:700;}
+  .scoreBig{margin-top:6px;font-size:64px;font-weight:800;color:var(--white);letter-spacing:2px;}
+  .scoreSmall{font-size:20px;color:rgba(255,255,255,0.85);margin-left:8px;font-weight:700;}
+  .centerBlock{flex:1 1 400px;display:flex;flex-direction:column;gap:10px;}
+  .thisOverLabel{display:flex;align-items:center;justify-content:center;background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));padding:6px 8px;border-radius:12px;border:2px solid rgba(255,201,40,0.06);color:var(--muted);font-weight:700;font-size:18px;width:160px;margin:0 auto;}
+  .ballsStrip{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:6px;}
+  .ball{width:64px;height:64px;border-radius:10px;border:3px solid rgba(255,201,40,0.9);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:var(--white);background:transparent;box-shadow: 0 4px 10px rgba(0,0,0,0.4) inset;}
+  .ball.zero{ color:rgba(255,255,255,0.85); background:transparent; border-color: rgba(255,255,255,0.06);}
+  .ball.run4{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  .ball.run6{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  .ball.wicket{ background:#B71C1C; color:#fff; border-color:#8A1515; }
+  .rightBlock{min-width:420px;display:flex;flex-direction:column;gap:10px;}
+  .batsmenBox{display:flex;gap:10px;flex-direction:column;}
+  .bRow{display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--bg);border-radius:12px;border:2px solid rgba(255,201,40,0.05);}
+  .bLeft{display:flex;gap:12px;align-items:center;}
+  .strikeDot{width:18px;height:18px;border-radius:50%;background:var(--accent);box-shadow:0 2px 6px rgba(0,0,0,0.4);}
+  .bName{ font-weight:800;color:var(--white); font-size:20px;}
+  .bStats{ font-weight:800;color:var(--muted); font-size:18px;}
+  .bowlerBox{margin-top:4px;padding:10px;background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:12px;display:flex;justify-content:space-between;align-items:center;border:2px solid rgba(255,201,40,0.05);color:var(--muted);font-weight:700;font-size:18px;}
+  @media (max-width:1100px){ .lowerThird{ width:95%; flex-direction:column; height:auto; padding:12px; gap:10px; } .leftBlock, .rightBlock { min-width:unset; width:100%;} .centerBlock{ order:3; } }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card" style="background:transparent;border:none;">
-    <div class="score" id="scoreText">0/0</div>
-    <div class="oversBar" id="oversText">0.0 OVERS</div>
-
-    <div class="playerRow">
-      <div class="playerLeft"><span class="dot" id="p1dot"></span><div id="p1name">Batsman 1</div></div>
-      <div class="playerRight"><span id="p1runs">0</span>/<span id="p1balls">0</span></div>
+<div class="stage">
+  <div class="lowerThird" id="overlay">
+    <div class="leftBlock">
+      <div class="teamRow">
+        <div class="teamName" id="teamName">APEX</div>
+        <div class="oversSmall" id="oversSmall">0.0 ov</div>
+      </div>
+      <div style="display:flex;align-items:baseline;">
+        <div class="scoreBig" id="scoreBig">0/0</div>
+        <div class="scoreSmall" id="runrate" style="margin-left:auto;font-size:18px;color:rgba(255,255,255,0.8)">RR: 0.0</div>
+      </div>
     </div>
 
-    <div class="playerRow">
-      <div class="playerLeft"><span class="dot" id="p2dot" style="background:transparent;border:3px solid var(--yellow)"></span><div id="p2name">Batsman 2</div></div>
-      <div class="playerRight"><span id="p2runs">0</span>/<span id="p2balls">0</span></div>
+    <div class="centerBlock">
+      <div class="thisOverLabel">THIS OVER</div>
+      <div class="ballsStrip" id="ballsStrip">
+        <div class="ball zero" id="b1">-</div>
+        <div class="ball zero" id="b2">-</div>
+        <div class="ball zero" id="b3">-</div>
+        <div class="ball zero" id="b4">-</div>
+        <div class="ball zero" id="b5">-</div>
+        <div class="ball zero" id="b6">-</div>
+      </div>
     </div>
 
-    <div class="bowlerRow"><div id="bowlerName">Bowler</div><div id="bowlerFigures">0.0 - 0 - 0</div></div>
+    <div class="rightBlock">
+      <div class="batsmenBox">
+        <div class="bRow">
+          <div class="bLeft"><div class="strikeDot" id="s1dot"></div><div class="bName" id="p1name">Batsman 1</div></div>
+          <div class="bStats" id="p1stats">0(0)</div>
+        </div>
+        <div class="bRow">
+          <div class="bLeft"><div class="strikeDot" id="s2dot" style="background:transparent;border:2px solid var(--accent)"></div><div class="bName" id="p2name">Batsman 2</div></div>
+          <div class="bStats" id="p2stats">0(0)</div>
+        </div>
+      </div>
 
-    <div class="lastBalls">
-      <div class="ball" id="b1">-</div>
-      <div class="ball" id="b2">-</div>
-      <div class="ball" id="b3">-</div>
-      <div class="ball" id="b4">-</div>
-      <div class="ball" id="b5">-</div>
-      <div class="ball" id="b6">-</div>
+      <div class="bowlerBox">
+        <div id="bowlerName">Bowler</div>
+        <div id="bowlerFigures">0.0 - 0 - 0</div>
+      </div>
     </div>
+
   </div>
 </div>
 
 <script>
-/* CONFIG: put your Apps Script /exec URL here (must end with /exec) */
+/* ----- CONFIG: your Apps Script /exec URL is placed here ----- */
 const CONFIG = {
-  feedUrl: "https://script.google.com/macros/s/AKfycbyAOax8RzMXUnvj6IrA0rdKeZOEQH3tYWiNzCXVtEe7Eo45qAtQEr8pNmtgOY-sm5tmvg/exec",
+  feedUrl: "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec",
   refreshMs: 1200,
-  jsonpCallbackName: "apexOverlayCallback"  // name for JSONP callback
+  jsonpCallbackName: "apexLTCallback"
 };
 
-/* JSONP loader: adds a <script> tag with ?callback=apexOverlayCallback&ts=... to prevent caching */
+/* JSONP loader & callback (works around CORS) */
 function loadJSONP() {
   const s = document.createElement('script');
   const ts = Date.now();
   const url = CONFIG.feedUrl + (CONFIG.feedUrl.indexOf('?') === -1 ? '?' : '&') + "callback=" + CONFIG.jsonpCallbackName + "&_=" + ts;
   s.src = url;
   s.async = true;
-  s.onerror = function() {
-    console.error("JSONP load error:", url);
-  };
+  s.onerror = function(e){ console.error("JSONP load failed", e, url); };
   document.head.appendChild(s);
-  // remove script tag after it loads to keep DOM clean
-  s.onload = () => { try{ document.head.removeChild(s);}catch(e){} };
+  s.onload = ()=>{ try{ document.head.removeChild(s);}catch(e){} };
 }
 
-/* The JSONP callback – Apps Script will call this with the payload object */
-function apexOverlayCallback(data) {
-  if (!data) return;
-  // Score & overs
-  document.getElementById('scoreText').textContent = data.score || "0/0";
-  document.getElementById('oversText').textContent = (data.overs || "0.0") + " OVERS";
+function apexLTCallback(data){
+  if(!data) return;
+  // Team & score
+  document.getElementById('teamName').textContent = data.team || data.title || "APEX";
+  document.getElementById('scoreBig').textContent = data.score || "0/0";
+  document.getElementById('oversSmall').textContent = (data.overs || "0.0") + " ov";
+
+  // run rate calculation
+  let rr = 0.0;
+  try {
+    const parts = (data.overs || "0.0").split('.');
+    const overs = parseInt(parts[0]||0,10) + (parseInt(parts[1]||0,10)/6);
+    rr = overs > 0 ? ( (data.runs||0) / overs ) : 0;
+    rr = Math.round(rr*10)/10;
+  } catch(e){ rr = 0.0; }
+  document.getElementById('runrate').textContent = "RR: " + rr;
+
   // Batsmen
   const p1 = (data.batsmen && data.batsmen[0]) || {name:"-",runs:0,balls:0,striker:false};
   const p2 = (data.batsmen && data.batsmen[1]) || {name:"-",runs:0,balls:0,striker:false};
-  document.getElementById('p1name').textContent = p1.name;
-  document.getElementById('p1runs').textContent = p1.runs;
-  document.getElementById('p1balls').textContent = p1.balls;
-  document.getElementById('p2name').textContent = p2.name;
-  document.getElementById('p2runs').textContent = p2.runs;
-  document.getElementById('p2balls').textContent = p2.balls;
-  document.getElementById('p1dot').style.background = p1.striker ? "var(--yellow)" : "transparent";
-  document.getElementById('p1dot').style.border = p1.striker ? "none" : "3px solid var(--yellow)";
-  document.getElementById('p2dot').style.background = p2.striker ? "var(--yellow)" : "transparent";
-  document.getElementById('p2dot').style.border = p2.striker ? "none" : "3px solid var(--yellow)";
+  document.getElementById('p1name').textContent = p1.name || "-";
+  document.getElementById('p1stats').textContent = (p1.runs||0) + "(" + (p1.balls||0) + ")";
+  document.getElementById('p2name').textContent = p2.name || "-";
+  document.getElementById('p2stats').textContent = (p2.runs||0) + "(" + (p2.balls||0) + ")";
+
+  // striker dots
+  document.getElementById('s1dot').style.background = p1.striker ? "var(--accent)" : "transparent";
+  document.getElementById('s1dot').style.border = p1.striker ? "none" : "2px solid var(--accent)";
+  document.getElementById('s2dot').style.background = p2.striker ? "var(--accent)" : "transparent";
+  document.getElementById('s2dot').style.border = p2.striker ? "none" : "2px solid var(--accent)";
+
   // Bowler
-  if (data.bowler) {
+  if(data.bowler){
     document.getElementById('bowlerName').textContent = data.bowler.name || "Bowler";
     document.getElementById('bowlerFigures').textContent = (data.bowler.overs || "0.0") + " - " + (data.bowler.runs||0) + " - " + (data.bowler.wickets||0);
   }
-  // Last balls
+
+  // Last 6 balls (display)
   const lb = data.lastBalls || [];
   const filled = Array(6 - lb.length).fill("-").concat(lb);
-  for (let i=0;i<6;i++){
+  for(let i=0;i<6;i++){
     const el = document.getElementById('b' + (i+1));
-    const val = filled[i] === undefined ? "-" : filled[i];
-    el.textContent = val;
-    el.style.background = "transparent";
-    el.style.color = "var(--white)";
-    const t = (val+"").toUpperCase();
-    if (t === "W") { el.style.background = "#B71C1C"; el.style.color = "#fff"; }
-    else if (t === "4" || t === "6") { el.style.background = "var(--yellow)"; el.style.color = "var(--navy)"; }
-    else if ((t+"").startsWith("+")) { el.style.background = "#2E2E2E"; }
+    const v = (filled[i]===undefined) ? "-" : filled[i];
+    el.textContent = v;
+    el.className = "ball";
+    if(v === "W") { el.classList.add("wicket"); }
+    else if(v === "4") { el.classList.add("run4"); }
+    else if(v === "6") { el.classList.add("run6"); }
+    else if(String(v).startsWith("+")) { el.classList.remove("run4","run6"); el.style.background = "#333"; el.style.color = "#fff"; }
+    else { el.classList.add("zero"); el.style.background = "transparent"; el.style.color = "var(--white)"; }
   }
 }
 
-/* bootstrap: call JSONP repeatedly */
-function loopJSONP() {
+/* start JSONP loop */
+function loopJSONP(){
   loadJSONP();
   setTimeout(loopJSONP, CONFIG.refreshMs);
 }
-
-/* start */
 loopJSONP();
 </script>
 </body>
