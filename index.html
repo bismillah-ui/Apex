@@ -10,7 +10,7 @@
   --royal1:#0a1d4d;
   --royal2:#0f2e7a;
   --royal3:#143fa8;
-  --yellow:#ffcc00; /* Australia yellow */
+  --yellow:#ffcc00;
   --white:#ffffff;
 }
 
@@ -29,8 +29,7 @@ html,body{
   padding:0 26px;
   box-sizing:border-box;
   color:var(--white);
-  background:
-    linear-gradient(180deg,var(--royal3),var(--royal1));
+  background:linear-gradient(180deg,var(--royal3),var(--royal1));
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,.25),
     0 8px 24px rgba(0,0,0,.55);
@@ -38,7 +37,7 @@ html,body{
 
 /* TEAMS */
 .teams{
-  font-size:46px;   /* BIGGER */
+  font-size:46px;
   font-weight:900;
   margin-right:32px;
   white-space:nowrap;
@@ -48,24 +47,41 @@ html,body{
 .scoreWrap{
   display:flex;
   flex-direction:column;
+  align-items:center;
   margin-right:30px;
 }
 .score{
   background:linear-gradient(180deg,#ffe680,var(--yellow));
   color:#000;
-  font-size:76px;   /* UNCHANGED */
+  font-size:76px;
   font-weight:900;
-  padding:10px 36px;
-  border-radius:10px;
+  padding:12px 40px;
+  border-radius:12px;
   line-height:1;
-  box-shadow:0 6px 20px rgba(0,0,0,.4);
+  position:relative;
+
+  /* 3D EMBOSSED EFFECT */
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.7),
+    inset 0 -4px 0 rgba(0,0,0,.25),
+    0 10px 22px rgba(0,0,0,.45);
+
+  text-shadow:
+    0 2px 0 rgba(255,255,255,.6),
+    0 -1px 0 rgba(0,0,0,.2),
+    2px 3px 4px rgba(0,0,0,.35);
 }
+
+/* OVERS – FIXED VISIBILITY */
 .overs{
   margin-top:6px;
-  font-size:30px;   /* BIGGER */
-  font-weight:800;
-  text-align:center;
-  opacity:.95;
+  padding:4px 12px;
+  font-size:34px;
+  font-weight:900;
+  line-height:1.1;
+  background:rgba(0,0,0,.25);
+  border-radius:20px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
 }
 
 /* BALL TIMELINE */
@@ -76,14 +92,14 @@ html,body{
   margin-right:36px;
 }
 .ball{
-  width:60px;   /* BIGGER */
+  width:60px;
   height:60px;
   border-radius:50%;
   background:rgba(255,255,255,.18);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:28px;  /* BIGGER */
+  font-size:28px;
   font-weight:900;
   box-shadow:
     inset 0 2px 6px rgba(255,255,255,.25),
@@ -116,14 +132,14 @@ html,body{
   background:linear-gradient(180deg,#1b3fa0,#102b70);
   padding:16px 28px;
   border-radius:10px;
-  font-size:38px;   /* BIGGER */
+  font-size:38px;
   font-weight:900;
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.2),
     0 6px 18px rgba(0,0,0,.45);
 }
 .bat span{
-  font-size:26px;   /* BIGGER */
+  font-size:26px;
   font-weight:800;
   opacity:.95;
   margin-left:10px;
@@ -161,10 +177,9 @@ html,body{
 </div>
 
 <script>
-/* FEED URL */
 const FEED =
 "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
-const CB="royalBigCB";
+const CB="royal3DCB";
 
 function load(){
   const s=document.createElement("script");
@@ -174,7 +189,7 @@ function load(){
 }
 setInterval(load,1000);
 
-function royalBigCB(d){
+function royal3DCB(d){
   if(!d) return;
 
   document.getElementById("teams").textContent =
