@@ -1,242 +1,170 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Apex — Horizontal Slim Overlay</title>
-
-<!-- Rubik Bold Font -->
+<meta charset="utf-8">
+<title>IPL Style Scorebar</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --yellow: #FFC928;
-  --navy:  #0A1A3B;
-  --white: #FFFFFF;
-  --bar-h: 72px;
+  --dark:#2b2f4a;
+  --dark2:#1f2236;
+  --yellow:#f6c700;
+  --white:#ffffff;
 }
 
-/* page transparent for streaming */
-html,body{margin:0;background:transparent;font-family:"Rubik",sans-serif;font-weight:800;}
+html,body{
+  margin:0;
+  background:transparent;
+  font-family:'Rubik',sans-serif;
+}
 
-.bar {
-  width:100%;
-  height:var(--bar-h);
-  background:var(--yellow);
+.bar{
+  width:1920px;
+  height:100px;
+  background:linear-gradient(180deg,var(--dark),var(--dark2));
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:8px 18px;
+  padding:0 20px;
   box-sizing:border-box;
-  border-radius:8px;
-  border:2px solid rgba(10,26,59,0.06);
-  box-shadow:0 6px 20px rgba(10,26,59,0.08);
+  color:var(--white);
 }
 
-/* LEFT */
-.left{
+/* LEFT TEAM */
+.teams{
+  font-size:26px;
+  font-weight:800;
+  margin-right:20px;
+  white-space:nowrap;
+}
+
+/* SCORE BLOCK */
+.scoreBox{
+  background:var(--yellow);
+  color:#000;
+  font-size:44px;
+  font-weight:800;
+  padding:10px 22px;
+  border-radius:6px;
+  margin-right:16px;
+}
+
+/* OVERS */
+.overs{
+  font-size:18px;
+  opacity:.9;
+  margin-right:30px;
+}
+
+/* BATSMEN */
+.batsmen{
   display:flex;
-  align-items:center;
-  gap:14px;
-  min-width:320px;
+  gap:22px;
+  flex:1;
 }
-.team{font-size:20px;color:var(--navy);letter-spacing:1px;}
-.score{font-size:28px;color:var(--navy);}
-.overs{font-size:14px;color:var(--navy);opacity:0.9;}
-.target{font-size:14px;color:var(--navy);font-weight:700;opacity:0.9;}
 
-/* CENTER */
-.center{
+.bat{
+  background:rgba(255,255,255,0.08);
+  padding:8px 14px;
+  border-radius:6px;
+  font-size:20px;
+  white-space:nowrap;
+}
+
+.bat span{
+  font-size:16px;
+  opacity:.85;
+}
+
+/* TARGET BOX */
+.targetBox{
   display:flex;
   align-items:center;
   gap:10px;
-  flex:1 1 520px;
-  justify-content:center;
 }
-.label{font-size:14px;color:var(--navy);white-space:nowrap;}
-.balls{display:flex;gap:8px;}
-.ball{
-  width:40px;
-  height:40px;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
+
+.targetBig{
+  background:var(--yellow);
+  color:#000;
+  font-size:42px;
   font-weight:800;
-  border:2px solid rgba(10,26,59,0.12);
-  color:var(--navy);
-  background:transparent;
-  transition:transform .2s ease, box-shadow .2s ease;
+  padding:10px 20px;
+  border-radius:6px;
 }
-.zero{opacity:0.95;}
-.wicket{background:var(--white);color:#B71C1C;border-color:#8A1515;}
-.run4,.run6{background:var(--navy);color:var(--yellow);border-color:var(--navy);}
 
-/* animation */
-@keyframes hit {
-  0%{transform:scale(1);box-shadow:0 0 0 rgba(10,26,59,0);}
-  30%{transform:scale(1.20);box-shadow:0 8px 28px rgba(10,26,59,0.28);}
-  60%{transform:scale(1.05);box-shadow:0 6px 18px rgba(10,26,59,0.18);}
-  100%{transform:scale(1);box-shadow:0 0 0 rgba(10,26,59,0);}
+.targetText{
+  font-size:16px;
+  opacity:.9;
 }
-.hit{animation:hit 700ms ease;}
-
-/* RIGHT */
-.right{
-  display:flex;
-  align-items:center;
-  gap:18px;
-  min-width:420px;
-  justify-content:flex-end;
-}
-.bat{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--navy);}
-.dot{width:14px;height:14px;border-radius:50%;background:var(--navy);}
-.dot.off{background:transparent;border:2px solid var(--navy);}
-.bowler{font-size:15px;color:var(--navy);}
 </style>
 </head>
 
 <body>
 
-<div class="bar" id="bar">
+<div class="bar">
 
-  <!-- LEFT -->
-  <div class="left">
-    <div>
-      <div class="team" id="teamName">APEX</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <div class="score" id="scoreBig">0/0</div>
-        <div class="overs" id="oversSmall">0.0 ov</div>
-      </div>
-    </div>
-    <div class="target" id="targetText"></div>
+  <!-- TEAMS -->
+  <div class="teams" id="teams">IXIP v KKR</div>
+
+  <!-- SCORE -->
+  <div class="scoreBox" id="score">130–2</div>
+
+  <!-- OVERS -->
+  <div class="overs" id="overs">OVERS 13.2</div>
+
+  <!-- BATSMEN -->
+  <div class="batsmen">
+    <div class="bat" id="bat1">M PANDEY <span>63 (39)</span></div>
+    <div class="bat" id="bat2">Y PATHAN* <span>36 (21)</span></div>
   </div>
 
-  <!-- CENTER -->
-  <div class="center">
-    <div class="label">THIS OVER</div>
-    <div class="balls" id="ballsStrip">
-      <div class="ball zero" id="b1">-</div>
-      <div class="ball zero" id="b2">-</div>
-      <div class="ball zero" id="b3">-</div>
-      <div class="ball zero" id="b4">-</div>
-      <div class="ball zero" id="b5">-</div>
-      <div class="ball zero" id="b6">-</div>
-    </div>
-  </div>
-
-  <!-- RIGHT -->
-  <div class="right">
-    <div class="bat">
-      <div class="dot" id="s1dot"></div>
-      <div id="p1name">Batsman 1</div>
-      <div id="p1stats" style="opacity:.9;font-size:14px;">0(0)</div>
-    </div>
-
-    <div class="bat">
-      <div class="dot off" id="s2dot"></div>
-      <div id="p2name">Batsman 2</div>
-      <div id="p2stats" style="opacity:.9;font-size:14px;">0(0)</div>
-    </div>
-
-    <div class="bowler" id="bowlerFigures">Bowler 0.0-0-0</div>
+  <!-- TARGET -->
+  <div class="targetBox">
+    <div class="targetBig" id="target">70</div>
+    <div class="targetText">RUNS TO WIN<br>40 BALLS LEFT</div>
   </div>
 
 </div>
 
 <script>
-/* FEED URL SET HERE (YOUR FINAL URL) */
-const CONFIG = {
-  feedUrl: "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec",
-  refreshMs: 1200,
-  jsonpCallbackName: "apexHTCallback"
-};
+/* FEED URL – replace if needed */
+const FEED = "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
+const CB = "iplCallback";
 
-function loadJSONP(){
-  const old = document.getElementById("_jsonp");
-  if(old) old.remove();
-
-  const s = document.createElement("script");
-  s.id = "_jsonp";
-  s.src = CONFIG.feedUrl + "?callback=" + CONFIG.jsonpCallbackName + "&_=" + Date.now();
-  s.onerror = e => console.error("JSONP error", e);
+function load(){
+  const s=document.createElement("script");
+  s.src=FEED+"?callback="+CB+"&_="+Date.now();
   document.body.appendChild(s);
+  s.onload=()=>s.remove();
 }
+setInterval(load,1000);
 
-function animate(el){
-  if(!el) return;
-  el.classList.remove("hit");
-  void el.offsetWidth;
-  el.classList.add("hit");
-}
-
-const STATE = { balls:["-","-","-","-","-","-"] };
-
-function apexHTCallback(d){
+function iplCallback(d){
   if(!d) return;
 
-  document.getElementById("teamName").textContent = d.team || "APEX";
-  document.getElementById("scoreBig").textContent = d.score || "0/0";
-  document.getElementById("oversSmall").textContent = (d.overs||"0.0")+" ov";
+  document.getElementById("teams").textContent =
+    (d.team||"") + " v " + (d.opponent||"");
 
-  // TARGET
-  const tgt = (d.target===undefined||d.target==="") ? "" : "TARGET: " + d.target;
-  document.getElementById("targetText").textContent = tgt;
+  document.getElementById("score").textContent = d.score||"0-0";
+  document.getElementById("overs").textContent = "OVERS " + (d.overs||"0.0");
 
-  // BATSMEN
-  const p1 = d.batsmen?.[0] || {name:"-",runs:0,balls:0,striker:false};
-  const p2 = d.batsmen?.[1] || {name:"-",runs:0,balls:0,striker:false};
+  const b1=d.batsmen?.[0]||{};
+  const b2=d.batsmen?.[1]||{};
 
-  document.getElementById("p1name").textContent = p1.name;
-  document.getElementById("p1stats").textContent = `${p1.runs}(${p1.balls})`;
+  document.getElementById("bat1").innerHTML =
+    `${b1.name||""}${b1.striker?"*":""} <span>${b1.runs||0} (${b1.balls||0})</span>`;
 
-  document.getElementById("p2name").textContent = p2.name;
-  document.getElementById("p2stats").textContent = `${p2.runs}(${p2.balls})`;
+  document.getElementById("bat2").innerHTML =
+    `${b2.name||""}${b2.striker?"*":""} <span>${b2.runs||0} (${b2.balls||0})</span>`;
 
-  document.getElementById("s1dot").classList.toggle("off", !p1.striker);
-  document.getElementById("s2dot").classList.toggle("off", !p2.striker);
-
-  // BOWLER
-  if(d.bowler){
-    document.getElementById("bowlerFigures").textContent =
-      `${d.bowler.name} ${d.bowler.overs}-${d.bowler.runs}-${d.bowler.wickets}`;
-  }
-
-  // CURRENT OVER BALLS LEFT-ALIGNED
-  let lb = Array.isArray(d.lastBalls) ? d.lastBalls.map(String) : [];
-  if(lb.length > 6) lb = lb.slice(-6);
-  const filled = lb.concat(Array(6 - lb.length).fill("-"));
-
-  for(let i=0;i<6;i++){
-    const el = document.getElementById("b"+(i+1));
-    const newVal = filled[i];
-    const oldVal = STATE.balls[i];
-
-    el.textContent = newVal;
-    el.className = "ball";
-
-    if(newVal==="W"){
-      el.classList.add("wicket");
-      if(newVal!==oldVal) animate(el);
-    }
-    else if(newVal==="4"){
-      el.classList.add("run4");
-      if(newVal!==oldVal) animate(el);
-    }
-    else if(newVal==="6"){
-      el.classList.add("run6");
-      if(newVal!==oldVal) animate(el);
-    }
-    else {
-      el.classList.add("zero");
-    }
-
-    STATE.balls[i] = newVal;
+  if(d.target){
+    const ballsLeft = Math.max(0,(d.totalBalls||120)-(d.ballsBowled||0));
+    document.getElementById("target").textContent =
+      Math.max(0,d.target-d.runs);
+    document.querySelector(".targetText").innerHTML =
+      "RUNS TO WIN<br>"+ballsLeft+" BALLS LEFT";
   }
 }
-
-(function loop(){ loadJSONP(); setTimeout(loop, CONFIG.refreshMs); })();
 </script>
 
 </body>
