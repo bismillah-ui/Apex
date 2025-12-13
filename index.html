@@ -19,82 +19,86 @@ html,body{
   font-family:'Rubik',sans-serif;
 }
 
+/* MAIN BAR */
 .bar{
   width:1920px;
   height:100px;
   background:linear-gradient(180deg,var(--dark),var(--dark2));
   display:flex;
   align-items:center;
-  padding:0 20px;
+  padding:0 28px;
   box-sizing:border-box;
   color:var(--white);
+  animation:slideIn .5s ease-out;
 }
 
-/* LEFT TEAM */
+@keyframes slideIn{
+  from{transform:translateY(15px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
+
+/* TEAMS */
 .teams{
-  font-size:26px;
+  font-size:34px;
   font-weight:800;
-  margin-right:20px;
+  margin-right:28px;
   white-space:nowrap;
 }
 
-/* SCORE BLOCK */
+/* SCORE */
 .scoreBox{
   background:var(--yellow);
   color:#000;
-  font-size:44px;
+  font-size:62px;
   font-weight:800;
-  padding:10px 22px;
+  padding:12px 30px;
   border-radius:6px;
-  margin-right:16px;
+  margin-right:22px;
+  box-shadow:0 6px 18px rgba(0,0,0,.35);
 }
 
 /* OVERS */
 .overs{
-  font-size:18px;
+  font-size:22px;
   opacity:.9;
-  margin-right:30px;
+  margin-right:36px;
 }
 
 /* BATSMEN */
 .batsmen{
   display:flex;
-  gap:22px;
+  gap:32px;
   flex:1;
 }
 
 .bat{
+  position:relative;
   background:rgba(255,255,255,0.08);
-  padding:8px 14px;
+  padding:12px 20px;
   border-radius:6px;
-  font-size:20px;
+  font-size:28px;
   white-space:nowrap;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
 }
 
 .bat span{
-  font-size:16px;
-  opacity:.85;
-}
-
-/* TARGET BOX */
-.targetBox{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.targetBig{
-  background:var(--yellow);
-  color:#000;
-  font-size:42px;
-  font-weight:800;
-  padding:10px 20px;
-  border-radius:6px;
-}
-
-.targetText{
-  font-size:16px;
+  font-size:20px;
   opacity:.9;
+  margin-left:6px;
+}
+
+/* SHINE ANIMATION */
+.bat::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent);
+  transform:translateX(-120%);
+  animation:shine 4s infinite;
+}
+
+@keyframes shine{
+  to{transform:translateX(120%)}
 }
 </style>
 </head>
@@ -104,48 +108,43 @@ html,body{
 <div class="bar">
 
   <!-- TEAMS -->
-  <div class="teams" id="teams">IXIP v KKR</div>
+  <div class="teams" id="teams">TEAM A v TEAM B</div>
 
   <!-- SCORE -->
-  <div class="scoreBox" id="score">130–2</div>
+  <div class="scoreBox" id="score">0–0</div>
 
   <!-- OVERS -->
-  <div class="overs" id="overs">OVERS 13.2</div>
+  <div class="overs" id="overs">OVERS 0.0</div>
 
   <!-- BATSMEN -->
   <div class="batsmen">
-    <div class="bat" id="bat1">M PANDEY <span>63 (39)</span></div>
-    <div class="bat" id="bat2">Y PATHAN* <span>36 (21)</span></div>
-  </div>
-
-  <!-- TARGET -->
-  <div class="targetBox">
-    <div class="targetBig" id="target">70</div>
-    <div class="targetText">RUNS TO WIN<br>40 BALLS LEFT</div>
+    <div class="bat" id="bat1">BATSMAN 1 <span>0 (0)</span></div>
+    <div class="bat" id="bat2">BATSMAN 2 <span>0 (0)</span></div>
   </div>
 
 </div>
 
 <script>
-/* FEED URL – replace if needed */
-const FEED = "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
-const CB = "iplCallback";
+/* FEED URL */
+const FEED =
+"https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
+const CALLBACK = "iplBigFontCB";
 
 function load(){
   const s=document.createElement("script");
-  s.src=FEED+"?callback="+CB+"&_="+Date.now();
+  s.src=FEED+"?callback="+CALLBACK+"&_="+Date.now();
   document.body.appendChild(s);
   s.onload=()=>s.remove();
 }
 setInterval(load,1000);
 
-function iplCallback(d){
+function iplBigFontCB(d){
   if(!d) return;
 
   document.getElementById("teams").textContent =
     (d.team||"") + " v " + (d.opponent||"");
 
-  document.getElementById("score").textContent = d.score||"0-0";
+  document.getElementById("score").textContent = d.score||"0–0";
   document.getElementById("overs").textContent = "OVERS " + (d.overs||"0.0");
 
   const b1=d.batsmen?.[0]||{};
@@ -156,14 +155,6 @@ function iplCallback(d){
 
   document.getElementById("bat2").innerHTML =
     `${b2.name||""}${b2.striker?"*":""} <span>${b2.runs||0} (${b2.balls||0})</span>`;
-
-  if(d.target){
-    const ballsLeft = Math.max(0,(d.totalBalls||120)-(d.ballsBowled||0));
-    document.getElementById("target").textContent =
-      Math.max(0,d.target-d.runs);
-    document.querySelector(".targetText").innerHTML =
-      "RUNS TO WIN<br>"+ballsLeft+" BALLS LEFT";
-  }
 }
 </script>
 
