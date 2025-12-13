@@ -2,15 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>IPL Style Scorebar</title>
+<title>Star Sports Style Cricket Bar</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --dark:#2b2f4a;
-  --dark2:#1f2236;
+  --bg1:#2b2f4a;
+  --bg2:#1f2236;
+  --panel:#3a3f66;
   --yellow:#f6c700;
-  --white:#ffffff;
+  --white:#fff;
 }
 
 html,body{
@@ -23,82 +24,98 @@ html,body{
 .bar{
   width:1920px;
   height:100px;
-  background:linear-gradient(180deg,var(--dark),var(--dark2));
   display:flex;
   align-items:center;
-  padding:0 28px;
+  padding:0 24px;
   box-sizing:border-box;
   color:var(--white);
-  animation:slideIn .5s ease-out;
-}
-
-@keyframes slideIn{
-  from{transform:translateY(15px);opacity:0}
-  to{transform:translateY(0);opacity:1}
+  background:
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  box-shadow:0 6px 20px rgba(0,0,0,.45);
 }
 
 /* TEAMS */
 .teams{
   font-size:34px;
   font-weight:800;
-  margin-right:28px;
+  margin-right:24px;
   white-space:nowrap;
 }
 
-/* SCORE */
-.scoreBox{
+/* SCORE PANEL */
+.scoreWrap{
+  display:flex;
+  flex-direction:column;
+  margin-right:22px;
+}
+.score{
   background:var(--yellow);
   color:#000;
   font-size:62px;
   font-weight:800;
-  padding:12px 30px;
+  padding:8px 28px;
   border-radius:6px;
-  margin-right:22px;
-  box-shadow:0 6px 18px rgba(0,0,0,.35);
+  line-height:1;
 }
-
-/* OVERS */
 .overs{
-  font-size:22px;
-  opacity:.9;
-  margin-right:36px;
-}
-
-/* BATSMEN */
-.batsmen{
-  display:flex;
-  gap:32px;
-  flex:1;
-}
-
-.bat{
-  position:relative;
-  background:rgba(255,255,255,0.08);
-  padding:12px 20px;
-  border-radius:6px;
-  font-size:28px;
-  white-space:nowrap;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);
-}
-
-.bat span{
+  margin-top:4px;
   font-size:20px;
   opacity:.9;
+  text-align:center;
+}
+
+/* BALL TIMELINE */
+.timeline{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-right:28px;
+}
+.ball{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:800;
+  transition:.25s;
+}
+.ball.run4,.ball.run6{
+  background:var(--yellow);
+  color:#000;
+  box-shadow:0 0 14px rgba(246,199,0,.9);
+}
+.ball.wicket{
+  background:#c62828;
+  box-shadow:0 0 14px rgba(198,40,40,.9);
+}
+@keyframes pop{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.35)}
+  100%{transform:scale(1)}
+}
+.hit{animation:pop .45s ease}
+
+/* BATSMEN PANEL */
+.batsmen{
+  display:flex;
+  gap:18px;
+  flex:1;
+}
+.bat{
+  background:var(--panel);
+  padding:10px 18px;
+  border-radius:6px;
+  font-size:26px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.bat span{
+  font-size:18px;
+  opacity:.9;
   margin-left:6px;
-}
-
-/* SHINE ANIMATION */
-.bat::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(120deg,transparent,rgba(255,255,255,.25),transparent);
-  transform:translateX(-120%);
-  animation:shine 4s infinite;
-}
-
-@keyframes shine{
-  to{transform:translateX(120%)}
 }
 </style>
 </head>
@@ -107,14 +124,22 @@ html,body{
 
 <div class="bar">
 
-  <!-- TEAMS -->
   <div class="teams" id="teams">TEAM A v TEAM B</div>
 
-  <!-- SCORE -->
-  <div class="scoreBox" id="score">0–0</div>
+  <div class="scoreWrap">
+    <div class="score" id="score">0–0</div>
+    <div class="overs" id="overs">OVERS 0.0</div>
+  </div>
 
-  <!-- OVERS -->
-  <div class="overs" id="overs">OVERS 0.0</div>
+  <!-- BALL TIMELINE -->
+  <div class="timeline">
+    <div class="ball" id="b1">–</div>
+    <div class="ball" id="b2">–</div>
+    <div class="ball" id="b3">–</div>
+    <div class="ball" id="b4">–</div>
+    <div class="ball" id="b5">–</div>
+    <div class="ball" id="b6">–</div>
+  </div>
 
   <!-- BATSMEN -->
   <div class="batsmen">
@@ -128,33 +153,47 @@ html,body{
 /* FEED URL */
 const FEED =
 "https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
-const CALLBACK = "iplBigFontCB";
+const CB="starCB";
 
 function load(){
   const s=document.createElement("script");
-  s.src=FEED+"?callback="+CALLBACK+"&_="+Date.now();
+  s.src=FEED+"?callback="+CB+"&_="+Date.now();
   document.body.appendChild(s);
   s.onload=()=>s.remove();
 }
 setInterval(load,1000);
 
-function iplBigFontCB(d){
+let prevBalls=["-","-","-","-","-","-"];
+
+function starCB(d){
   if(!d) return;
 
   document.getElementById("teams").textContent =
-    (d.team||"") + " v " + (d.opponent||"");
+    (d.team||"")+" v "+(d.opponent||"");
 
-  document.getElementById("score").textContent = d.score||"0–0";
-  document.getElementById("overs").textContent = "OVERS " + (d.overs||"0.0");
+  document.getElementById("score").textContent=d.score||"0–0";
+  document.getElementById("overs").textContent="OVERS "+(d.overs||"0.0");
 
   const b1=d.batsmen?.[0]||{};
   const b2=d.batsmen?.[1]||{};
 
-  document.getElementById("bat1").innerHTML =
+  document.getElementById("bat1").innerHTML=
     `${b1.name||""}${b1.striker?"*":""} <span>${b1.runs||0} (${b1.balls||0})</span>`;
-
-  document.getElementById("bat2").innerHTML =
+  document.getElementById("bat2").innerHTML=
     `${b2.name||""}${b2.striker?"*":""} <span>${b2.runs||0} (${b2.balls||0})</span>`;
+
+  let balls=Array.isArray(d.lastBalls)?d.lastBalls.map(String):[];
+  if(balls.length>6) balls=balls.slice(-6);
+  balls=balls.concat(Array(6-balls.length).fill("–"));
+
+  balls.forEach((v,i)=>{
+    const el=document.getElementById("b"+(i+1));
+    el.textContent=v;
+    el.className="ball";
+    if(v==="4"){el.classList.add("run4","hit")}
+    if(v==="6"){el.classList.add("run6","hit")}
+    if(v==="W"){el.classList.add("wicket","hit")}
+  });
 }
 </script>
 
