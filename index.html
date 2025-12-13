@@ -20,7 +20,6 @@ html,body{
   font-family:'Rubik',sans-serif;
 }
 
-/* MAIN STRIP */
 .bar{
   width:1920px;
   height:100px;
@@ -30,9 +29,7 @@ html,body{
   box-sizing:border-box;
   color:var(--white);
   background:linear-gradient(180deg,var(--royal3),var(--royal1));
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.25),
-    0 8px 24px rgba(0,0,0,.55);
+  box-shadow:0 8px 24px rgba(0,0,0,.55);
 }
 
 /* TEAMS */
@@ -43,7 +40,7 @@ html,body{
   white-space:nowrap;
 }
 
-/* TOP PANEL (MATCHING BATSMEN BOX STYLE) */
+/* SCORE PANEL */
 .scoreWrap{
   background:linear-gradient(180deg,#1b3fa0,#102b70);
   padding:10px 18px;
@@ -52,47 +49,33 @@ html,body{
   display:flex;
   flex-direction:column;
   align-items:center;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.18),
-    0 6px 18px rgba(0,0,0,.45);
+  box-shadow:0 6px 18px rgba(0,0,0,.45);
 }
 
-/* SCORE – PERFECT CENTER */
 .score{
   background:linear-gradient(180deg,#ffe680,var(--yellow));
   color:#000;
   font-size:76px;
   font-weight:900;
-  width:100%;
   padding:10px 40px;
   border-radius:10px;
-
-  /* CENTER FIX */
   display:flex;
   align-items:center;
   justify-content:center;
   line-height:normal;
-
-  /* 3D EFFECT */
   box-shadow:
     inset 0 3px 0 rgba(255,255,255,.7),
     inset 0 -4px 0 rgba(0,0,0,.25),
     0 10px 22px rgba(0,0,0,.45);
-  text-shadow:
-    0 2px 0 rgba(255,255,255,.6),
-    2px 3px 4px rgba(0,0,0,.35);
 }
 
-/* OVERS – VISIBLE & CENTERED */
 .overs{
   margin-top:8px;
   font-size:34px;
   font-weight:900;
   padding:4px 14px;
-  line-height:1.1;
   background:rgba(0,0,0,.25);
   border-radius:20px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
 }
 
 /* BALL TIMELINE */
@@ -112,26 +95,11 @@ html,body{
   justify-content:center;
   font-size:28px;
   font-weight:900;
-  box-shadow:
-    inset 0 2px 6px rgba(255,255,255,.25),
-    0 6px 14px rgba(0,0,0,.5);
-  transition:.25s;
 }
-.ball.run4,.ball.run6{
-  background:linear-gradient(180deg,#ffe680,var(--yellow));
-  color:#000;
-  box-shadow:0 0 22px rgba(255,204,0,1);
-}
-.ball.wicket{
-  background:linear-gradient(180deg,#ff5252,#b71c1c);
-  box-shadow:0 0 22px rgba(255,82,82,1);
-}
-@keyframes pop{
-  0%{transform:scale(1)}
-  40%{transform:scale(1.5)}
-  100%{transform:scale(1)}
-}
-.hit{animation:pop .45s ease}
+.ball.run4,.ball.run6{background:var(--yellow);color:#000;}
+.ball.wicket{background:#c62828;}
+.hit{animation:pop .4s ease}
+@keyframes pop{40%{transform:scale(1.5)}}
 
 /* BATSMEN */
 .batsmen{
@@ -145,14 +113,9 @@ html,body{
   border-radius:10px;
   font-size:38px;
   font-weight:900;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.2),
-    0 6px 18px rgba(0,0,0,.45);
 }
 .bat span{
   font-size:26px;
-  font-weight:800;
-  opacity:.95;
   margin-left:10px;
 }
 </style>
@@ -161,16 +124,13 @@ html,body{
 <body>
 
 <div class="bar">
-
   <div class="teams" id="teams">TEAM A v TEAM B</div>
 
-  <!-- TOP PANEL (NOW MATCHES BATSMEN STYLE) -->
   <div class="scoreWrap">
     <div class="score" id="score">0–0</div>
     <div class="overs" id="overs">OVERS 0.0</div>
   </div>
 
-  <!-- BALL COUNTER -->
   <div class="timeline">
     <div class="ball" id="b1">–</div>
     <div class="ball" id="b2">–</div>
@@ -180,13 +140,54 @@ html,body{
     <div class="ball" id="b6">–</div>
   </div>
 
-  <!-- BATSMEN -->
   <div class="batsmen">
     <div class="bat" id="bat1">BATSMAN 1 <span>0 (0)</span></div>
     <div class="bat" id="bat2">BATSMAN 2 <span>0 (0)</span></div>
   </div>
-
 </div>
+
+<script>
+/* 🔗 YOUR GOOGLE APPS SCRIPT WEB APP URL */
+const FEED =
+"https://script.google.com/macros/s/AKfycbw_RRTNhUeFIzDgsu5pVCUT0wNko-C9ejjKWTM25tQYcUO-Qa9M1yFORmA_yTvd2K91Nw/exec";
+const CALLBACK="scoreCB";
+
+/* JSONP LOAD */
+function load(){
+  const s=document.createElement("script");
+  s.src=FEED+"?callback="+CALLBACK+"&_="+Date.now();
+  document.body.appendChild(s);
+  s.onload=()=>s.remove();
+}
+setInterval(load,1000);
+
+/* CALLBACK FROM GOOGLE SHEET */
+function scoreCB(d){
+  if(!d) return;
+
+  document.getElementById("teams").textContent =
+    (d.team||"")+" v "+(d.opponent||"");
+
+  document.getElementById("score").textContent = d.score;
+  document.getElementById("overs").textContent = "OVERS "+d.overs;
+
+  const p1=d.batsmen[0], p2=d.batsmen[1];
+  document.getElementById("bat1").innerHTML =
+    `${p1.name}${p1.striker?"*":""} <span>${p1.runs} (${p1.balls})</span>`;
+  document.getElementById("bat2").innerHTML =
+    `${p2.name}${p2.striker?"*":""} <span>${p2.runs} (${p2.balls})</span>`;
+
+  let balls=d.lastBalls||[];
+  balls=balls.concat(Array(6-balls.length).fill("–"));
+  balls.forEach((v,i)=>{
+    const el=document.getElementById("b"+(i+1));
+    el.textContent=v;
+    el.className="ball";
+    if(v==="4"||v==="6"){el.classList.add("run4","hit")}
+    if(v==="W"){el.classList.add("wicket","hit")}
+  });
+}
+</script>
 
 </body>
 </html>
