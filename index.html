@@ -2,95 +2,79 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Score Overlay</title>
+<title>IPL Style Strip</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;background:transparent;font-family:'Rubik',sans-serif;}
-
-.scorebox{
-  width:520px;
-  border-radius:14px;
-  overflow:hidden;
-  background:linear-gradient(#ddd,#9a9a9a);
-  box-shadow:0 6px 20px rgba(0,0,0,.6);
+body{
+  margin:0;
+  background:transparent;
+  font-family:'Rubik',sans-serif;
 }
 
-.teambar{
-  text-align:center;
-  padding:8px;
+/* MAIN STRIP */
+.bar{
+  width:1920px;
+  height:90px;
+  background:linear-gradient(180deg,#143fa8,#0a1d4d);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 30px;
+  box-sizing:border-box;
+}
+
+/* TEAM */
+.team{
+  font-size:34px;
   font-weight:900;
-  font-size:28px;
+  margin-right:30px;
 }
 
-.mainrow{display:flex;}
-
+/* SCORE */
 .score{
-  flex:1;
   background:#000;
-  color:#fff;
-  font-size:60px;
+  padding:8px 26px;
+  border-radius:6px;
+  font-size:42px;
   font-weight:900;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  margin-right:20px;
 }
 
-.score.flip{animation:flip .4s ease;}
-@keyframes flip{40%{transform:rotateX(90deg);}}
-
-.oversBox{
-  width:160px;
-  background:#1c3f91;
-  color:#fff;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+/* OVERS */
+.overs{
+  font-size:28px;
+  margin-right:40px;
+  opacity:.9;
 }
 
-.oversTitle{font-size:18px;opacity:.8;}
-.overs{font-size:36px;font-weight:900;}
-
-.bats{
-  background:#555;
-  color:#fff;
-  font-size:22px;
+/* BATSMEN */
+.batsmen{
+  display:flex;
+  gap:40px;
+  font-size:28px;
+  font-weight:800;
 }
 
-.batRow{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 12px;
+.batsmen span{
+  opacity:.9;
 }
 </style>
 </head>
 
 <body>
 
-<div class="scorebox">
+<div class="bar">
 
-  <div class="teambar" id="team">TEAM</div>
+  <div class="team" id="team">TEAM</div>
 
-  <div class="mainrow">
-    <div class="score" id="score">0-0</div>
+  <div class="score" id="score">0-0</div>
 
-    <div class="oversBox">
-      <div class="oversTitle">OVERS</div>
-      <div class="overs" id="overs">0.0</div>
-    </div>
-  </div>
+  <div class="overs" id="overs">0.0</div>
 
-  <div class="bats">
-    <div class="batRow">
-      <span id="bat1"></span>
-      <span id="bat1s"></span>
-    </div>
-
-    <div class="batRow">
-      <span id="bat2"></span>
-      <span id="bat2s"></span>
-    </div>
+  <div class="batsmen">
+    <div id="bat1">Batter1 <span id="bat1s">0</span></div>
+    <div id="bat2">Batter2 <span id="bat2s">0</span></div>
   </div>
 
 </div>
@@ -107,7 +91,6 @@ function load(){
   document.body.appendChild(s);
   s.onload=()=>s.remove();
 }
-
 setInterval(load,1000);
 
 function scoreCB(d){
@@ -116,20 +99,14 @@ function scoreCB(d){
   team.textContent=d.team;
 
   if(d.score!==lastScore){
-    score.classList.remove("flip");
-    void score.offsetWidth;
     score.textContent=d.score;
-    score.classList.add("flip");
     lastScore=d.score;
   }
 
-  overs.textContent=d.overs;
+  overs.textContent="Overs "+d.overs;
 
-  bat1.textContent=d.batsmen[0].name+"*";
-  bat1s.textContent=d.batsmen[0].runs;
-
-  bat2.textContent=d.batsmen[1].name;
-  bat2s.textContent=d.batsmen[1].runs;
+  bat1.innerHTML=d.batsmen[0].name+"* <span>"+d.batsmen[0].runs+"</span>";
+  bat2.innerHTML=d.batsmen[1].name+" <span>"+d.batsmen[1].runs+"</span>";
 }
 </script>
 
