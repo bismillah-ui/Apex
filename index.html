@@ -23,12 +23,16 @@ body{
   overflow:hidden;
 }
 
-/* LOGO AREA */
+/* LOGO */
 .logo{
-  width:260px;
+  width:280px;
   display:flex;
   justify-content:center;
   align-items:center;
+}
+
+.logo img{
+  height:130px;
 }
 
 /* TEAM BLOCK */
@@ -37,10 +41,10 @@ body{
   color:#000;
   font-size:60px;
   font-weight:900;
-  padding:20px 60px;
+  padding:20px 80px;
 }
 
-/* STATS AREA */
+/* STATS */
 .stats{
   flex:1;
   display:flex;
@@ -66,6 +70,11 @@ body{
   font-size:72px;
   font-weight:900;
 }
+
+/* SCORE BIG */
+.scoreValue{
+  font-size:78px;
+}
 </style>
 </head>
 
@@ -73,29 +82,30 @@ body{
 
 <div class="scoreboard">
 
+  <!-- LOGO -->
   <div class="logo">
-    <img src="https://i.imgur.com/placeholder.png" height="120">
+    https://drive.google.com/file/d/1oXYL6up0tahbfIawK_18-_4YOxMmfAm9/view?usp=sharing
+    <img src="https://i.imgur.com/YOUR_APEX_LOGO.png">
   </div>
 
+  <!-- TEAM -->
   <div class="team">
     India
   </div>
 
+  <!-- STATS -->
   <div class="stats">
-    <div class="stat">
-      <div class="label">Score</div>
-      <div class="value">250</div>
-    </div>
 
     <div class="stat">
-      <div class="label">Wkts</div>
-      <div class="value">3</div>
+      <div class="label">Score</div>
+      <div class="value scoreValue">250/3</div>
     </div>
 
     <div class="stat">
       <div class="label">Overs</div>
       <div class="value">47.2</div>
     </div>
+
   </div>
 
 </div>
