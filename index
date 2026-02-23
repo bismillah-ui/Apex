@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>APEX BOSS Score Ticker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+
+body{
+    margin:0;
+    background:transparent;
+    font-family:'Poppins',sans-serif;
+}
+
+/* MAIN TICKER */
+.ticker{
+    display:flex;
+    align-items:center;
+    width:100%;
+    max-width:1200px;
+    height:120px;
+    border-radius:25px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,0.4);
+    background:linear-gradient(90deg,#0a3f1f,#0e5c2b);
+}
+
+/* LEFT LOGO AREA */
+.logo-area{
+    background:radial-gradient(circle at top,#0f5c2b,#062c14);
+    width:250px;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    font-weight:800;
+    color:#fff;
+    letter-spacing:1px;
+    border-right:3px solid #0f7a36;
+}
+
+/* TEAM GOLD PLATE */
+.team-plate{
+    background:linear-gradient(90deg,#f7d76a,#e6b82c);
+    height:100%;
+    width:300px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:36px;
+    font-weight:800;
+    color:#111;
+}
+
+/* RIGHT DATA SECTION */
+.data-area{
+    flex:1;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    color:white;
+}
+
+.stat{
+    text-align:center;
+}
+
+.label{
+    font-size:18px;
+    opacity:0.7;
+}
+
+.value{
+    font-size:42px;
+    font-weight:700;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="ticker">
+
+    <div class="logo-area">
+        APEX BOSS
+    </div>
+
+    <div class="team-plate" id="team">
+        Loading...
+    </div>
+
+    <div class="data-area">
+
+        <div class="stat">
+            <div class="label">Score</div>
+            <div class="value" id="score">-</div>
+        </div>
+
+        <div class="stat">
+            <div class="label">Wkts</div>
+            <div class="value" id="wkts">-</div>
+        </div>
+
+        <div class="stat">
+            <div class="label">Overs</div>
+            <div class="value" id="overs">-</div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+const sheetURL = https://docs.google.com/spreadsheets/d/e/2PACX-1vQfYMNTbMqEYXlZVOR-g-HfjedGjM0sFE3enqmtiOGcPWxyziXtE1BJv7A5a00Xpc29xcdY2-opiFNh/pubhtml
+
+async function fetchScore() {
+    try {
+        const response = await fetch(sheetURL);
+        const data = await response.text();
+        const rows = data.split("\n");
+        const cols = rows[1].split(",");
+
+        document.getElementById("team").innerText = cols[0];
+        document.getElementById("score").innerText = cols[1];
+        document.getElementById("wkts").innerText = cols[2];
+        document.getElementById("overs").innerText = cols[3];
+    } catch(err){
+        console.log("Error fetching data");
+    }
+}
+
+fetchScore();
+setInterval(fetchScore, 8000); // auto refresh every 8 sec
+</script>
+
+</body>
+</html>
