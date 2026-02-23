@@ -2,123 +2,103 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>IPL Full Strip</title>
+<title>Apex Boss Scoreboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
 body{
   margin:0;
-  background:transparent;
+  background:#f0f0f0;
   font-family:'Rubik',sans-serif;
 }
 
-/* FULL WIDTH BAR */
-.bar{
+/* MAIN BAR */
+.scoreboard{
   width:1920px;
-  height:110px;
-  background:linear-gradient(180deg,#143fa8,#0a1d4d);
-  color:#fff;
+  height:150px;
   display:flex;
   align-items:center;
-  padding:0 50px;
-  box-sizing:border-box;
+  background:linear-gradient(90deg,#0f3d1c,#0a2b14);
+  border-radius:0 25px 25px 0;
+  overflow:hidden;
 }
 
-/* LEFT SIDE */
-.left{
+/* LOGO AREA */
+.logo{
+  width:260px;
   display:flex;
+  justify-content:center;
   align-items:center;
-  gap:40px;
 }
 
-/* TEAM */
+/* TEAM BLOCK */
 .team{
-  font-size:56px;
+  background:linear-gradient(90deg,#f7d046,#f2b705);
+  color:#000;
+  font-size:60px;
   font-weight:900;
+  padding:20px 60px;
 }
 
-/* SCORE */
-.score{
-  background:#000;
-  padding:12px 40px;
-  border-radius:8px;
-  font-size:70px;
-  font-weight:900;
-}
-
-/* CENTER */
-.center{
+/* STATS AREA */
+.stats{
   flex:1;
-  text-align:center;
-  font-size:42px;
-  font-weight:800;
-}
-
-/* RIGHT SIDE BATSMEN */
-.right{
   display:flex;
-  gap:60px;
-  font-size:42px;
-  font-weight:800;
+  height:100%;
 }
 
-.right span{
-  margin-left:10px;
+.stat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+  border-left:2px solid rgba(255,255,255,0.2);
+}
+
+.label{
+  font-size:30px;
+  opacity:.8;
+}
+
+.value{
+  font-size:72px;
+  font-weight:900;
 }
 </style>
 </head>
 
 <body>
 
-<div class="bar">
+<div class="scoreboard">
 
-  <!-- LEFT -->
-  <div class="left">
-    <div class="team" id="team">TEAM</div>
-    <div class="score" id="score">0-0</div>
+  <div class="logo">
+    <img src="https://i.imgur.com/placeholder.png" height="120">
   </div>
 
-  <!-- CENTER -->
-  <div class="center" id="overs">Overs 0.0</div>
+  <div class="team">
+    India
+  </div>
 
-  <!-- RIGHT -->
-  <div class="right">
-    <div id="bat1">Batter1 <span>0</span></div>
-    <div id="bat2">Batter2 <span>0</span></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="label">Score</div>
+      <div class="value">250</div>
+    </div>
+
+    <div class="stat">
+      <div class="label">Wkts</div>
+      <div class="value">3</div>
+    </div>
+
+    <div class="stat">
+      <div class="label">Overs</div>
+      <div class="value">47.2</div>
+    </div>
   </div>
 
 </div>
-
-<script>
-const FEED="https://script.google.com/macros/s/AKfycbwlLGzKbfTMjPwhwzTHw5RWmfTCzWrm4RMECbkY2dl7uP8NgqNr7tUul513DQpbUFzGLw/exec";
-
-const CB="scoreCB";
-let lastScore="";
-
-function load(){
-  const s=document.createElement("script");
-  s.src=FEED+"?callback="+CB+"&_="+Date.now();
-  document.body.appendChild(s);
-  s.onload=()=>s.remove();
-}
-setInterval(load,1000);
-
-function scoreCB(d){
-  if(!d) return;
-
-  team.textContent=d.team;
-
-  if(d.score!==lastScore){
-    score.textContent=d.score;
-    lastScore=d.score;
-  }
-
-  overs.textContent="Overs "+d.overs;
-
-  bat1.innerHTML=d.batsmen[0].name+"* <span>"+d.batsmen[0].runs+"</span>";
-  bat2.innerHTML=d.batsmen[1].name+" <span>"+d.batsmen[1].runs+"</span>";
-}
-</script>
 
 </body>
 </html>
