@@ -2,113 +2,105 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Apex Boss Scoreboard</title>
+<title>Classic Scorecard</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  background:#f0f0f0;
-  font-family:'Rubik',sans-serif;
+body{margin:0;background:transparent;font-family:'Rubik',sans-serif;}
+
+.scorebox{
+  width:520px;border-radius:14px;
+  overflow:hidden;background:linear-gradient(#ddd,#9a9a9a);
+  box-shadow:0 6px 20px rgba(0,0,0,.6);
 }
 
-/* MAIN BAR */
-.scoreboard{
-  width:1920px;
-  height:150px;
-  display:flex;
-  align-items:center;
-  background:linear-gradient(90deg,#0f3d1c,#0a2b14);
-  border-radius:0 25px 25px 0;
-  overflow:hidden;
+.teambar{text-align:center;padding:8px;font-weight:900;font-size:28px;}
+
+.mainrow{display:flex;}
+
+.score{
+  flex:1;background:#000;color:#fff;
+  font-size:60px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
 }
 
-/* LOGO */
-.logo{
-  width:280px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
+.score.flip{animation:flip .4s ease;}
+@keyframes flip{40%{transform:rotateX(90deg);}}
+
+.oversBox{
+  width:160px;background:#1c3f91;color:#fff;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
 }
 
-.logo img{
-  height:130px;
-}
+.oversTitle{font-size:18px;opacity:.8;}
+.overs{font-size:36px;font-weight:900;}
 
-/* TEAM BLOCK */
-.team{
-  background:linear-gradient(90deg,#f7d046,#f2b705);
-  color:#000;
-  font-size:60px;
-  font-weight:900;
-  padding:20px 80px;
-}
-
-/* STATS */
-.stats{
-  flex:1;
-  display:flex;
-  height:100%;
-}
-
-.stat{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  border-left:2px solid rgba(255,255,255,0.2);
-}
-
-.label{
-  font-size:30px;
-  opacity:.8;
-}
-
-.value{
-  font-size:72px;
-  font-weight:900;
-}
-
-/* SCORE BIG */
-.scoreValue{
-  font-size:78px;
-}
+.bats{background:#555;color:#fff;font-size:22px;}
+.batRow{display:flex;justify-content:space-between;padding:6px 12px;}
 </style>
 </head>
 
 <body>
 
-<div class="scoreboard">
+<div class="scorebox">
+  <div class="teambar" id="team">TEAM</div>
 
-  <!-- LOGO -->
-  <div class="logo">
-    https://drive.google.com/uc?export=view&id=1oXYL6up0tahbfIawK_18-_4YOxMmfAm9
-    <img src="https://i.imgur.com/YOUR_APEX_LOGO.png">
-  </div>
-
-  <!-- TEAM -->
-  <div class="team">
-    India
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-
-    <div class="stat">
-      <div class="label">Score</div>
-      <div class="value scoreValue">250/3</div>
+  <div class="mainrow">
+    <div class="score" id="score">0-0</div>
+    <div class="oversBox">
+      <div class="oversTitle">OVERS</div>
+      <div class="overs" id="overs">0.0</div>
     </div>
-
-    <div class="stat">
-      <div class="label">Overs</div>
-      <div class="value">47.2</div>
-    </div>
-
   </div>
 
+  <div class="bats">
+    <div class="batRow">
+      <span id="bat1"></span>
+      <span id="bat1s"></span>
+    </div>
+    <div class="batRow">
+      <span id="bat2"></span>
+      <span id="bat2s"></span>
+    </div>
+  </div>
 </div>
+
+<script>
+const FEED=https://script.google.com/macros/s/AKfycbzq9H0C-MfndbkHpyYT4PejTR6Erg9B-ASLk4LqT7MFuokF03eq1TeVND6ECR16zpt9FQ/exec
+const CB="scoreCB";
+let lastScore="";
+
+function load(){
+  const s=document.createElement("script");
+  s.src=FEED+"?callback="+CB+"&_="+Date.now();
+  document.body.appendChild(s);
+  s.onload=()=>s.remove();
+}
+setInterval(load,1000);
+
+function scoreCB(d){
+  if(!d) return;
+
+  team.textContent=d.team;
+
+  if(d.score!==lastScore){
+    score.classList.remove("flip");
+    void score.offsetWidth;
+    score.textContent=d.score;
+    score.classList.add("flip");
+    lastScore=d.score;
+  }
+
+  overs.textContent=d.overs;
+
+  bat1.textContent=d.batsmen[0].name+"*";
+  bat1s.textContent=d.batsmen[0].runs;
+
+  bat2.textContent=d.batsmen[1].name;
+  bat2s.textContent=d.batsmen[1].runs;
+}
+</script>
 
 </body>
 </html>
